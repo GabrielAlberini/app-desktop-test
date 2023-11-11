@@ -1,12 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
 import "bulma/css/bulma.min.css";
-import "./App.css"; // Asegúrate de tener un archivo CSS para tus estilos personalizados
 
 const App = () => {
   const [phrase, setPhrase] = useState("");
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const handleInputChange = (e) => {
     setPhrase(e.target.value);
@@ -25,9 +25,12 @@ const App = () => {
       const { url } = response.data;
 
       setAudioUrl(url);
+      // Cambia el estado booleano para forzar la actualización
+      setForceUpdate((prev) => !prev);
     } catch (error) {
       console.error("Error realizando la solicitud POST:", error);
     } finally {
+      setPhrase("");
       setLoading(false);
     }
   };
@@ -37,7 +40,7 @@ const App = () => {
       <div className="hero-body">
         <div className="container has-text-centered">
           <div className="columns is-centered">
-            <div className="column is-half">
+            <div className="column is-half" key={forceUpdate}>
               <form onSubmit={handleSubmit}>
                 <div className="field">
                   <label className="label has-text-white">Frase:</label>
@@ -47,13 +50,14 @@ const App = () => {
                       type="text"
                       value={phrase}
                       onChange={handleInputChange}
+                      placeholder="Ingresa tu frase aquí"
                     />
                   </div>
                 </div>
                 <div className="field">
                   <div className="control">
                     <button
-                      className="button is-primary"
+                      className={`button is-primary ${loading && "is-loading"}`}
                       type="submit"
                       disabled={loading}
                     >
@@ -63,12 +67,12 @@ const App = () => {
                 </div>
               </form>
 
-              {loading && <p>Cargando...</p>}
+              {loading && <p className="has-text-white">Cargando...</p>}
 
               {audioUrl && (
                 <div>
-                  <h2 className="title is-4 has-text-white">Audio:</h2>
-                  <audio controls>
+                  <h2 className="title is-6 has-text-white pt-5">Audio:</h2>
+                  <audio controls className="mb-3">
                     <source src={audioUrl} type="audio/wav" />
                     Tu navegador no admite el elemento de audio.
                   </audio>
