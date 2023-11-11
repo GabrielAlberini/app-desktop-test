@@ -69,7 +69,7 @@ const App = () => {
                 <div>
                   <h2 className="title is-4 has-text-white">Audio:</h2>
                   <audio controls>
-                    <source src={audioUrl} type="audio/mpeg" />
+                    <source src={audioUrl} type="audio/wav" />
                     Tu navegador no admite el elemento de audio.
                   </audio>
                 </div>
